@@ -97,11 +97,21 @@ class Auto:
 
     @staticmethod
     def do(boy):
-        boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
-        boy.x += boy.dir * RUN_SPEED_PPS * game_framework.frame_time
-        boy.x = clamp(25, boy.x, 1600 - 25)
+        while True:
+            if not boy.is_turn:
+                boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+                boy.x += boy.dir * RUN_SPEED_PPS * game_framework.frame_time
+                boy.x = clamp(25, boy.x, 1600 - 25)
+                if boy.x > 1600:
+                    boy.is_turn = 1
+            else:
+                boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+                boy.x -= boy.dir * RUN_SPEED_PPS * game_framework.frame_time
+                boy.x = clamp(25, boy.x, 1600 - 25)
+                if boy.x < 0:
+                    boy.is_turn = 0
 
-    @staticmethod
+@staticmethod
     def draw(boy):
         boy.image.clip_draw(int(boy.frame) * 183, 168, 167, 167, boy.x, boy.y)
 
@@ -117,10 +127,7 @@ class Run:
 
     @staticmethod
     def exit(boy, e):
-        if space_down(e):
-            boy.fire_ball()
-
-        pass
+       pass
 
     @staticmethod
     def do(boy):
@@ -181,7 +188,7 @@ class Boy:
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.item = 'Ball'
-
+        self.is_turn = 0
 
     def fire_ball(self):
 
