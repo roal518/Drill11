@@ -14,6 +14,7 @@ from pico2d import get_time, load_image, load_font, clamp,  SDL_KEYDOWN, SDL_KEY
 from ball import Ball, BigBall
 import game_world
 import game_framework
+import random
 
 # state event check
 # ( state event type, event value )
@@ -92,64 +93,36 @@ class Auto:
     def exit(boy, e):
         if space_down(e):
             boy.fire_ball()
-
         pass
 
     @staticmethod
     def do(boy):
-        while True:
-            if not boy.is_turn:
-                boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
-                boy.x += boy.dir * RUN_SPEED_PPS * game_framework.frame_time
-                boy.x = clamp(25, boy.x, 1600 - 25)
-                if boy.x > 1600:
-                    boy.is_turn = 1
-            else:
-                boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
-                boy.x -= boy.dir * RUN_SPEED_PPS * game_framework.frame_time
-                boy.x = clamp(25, boy.x, 1600 - 25)
-                if boy.x < 0:
-                    boy.is_turn = 0
-
-@staticmethod
-    def draw(boy):
-        boy.image.clip_draw(int(boy.frame) * 183, 168, 167, 167, boy.x, boy.y)
-
-
-class Run:
-
-    @staticmethod
-    def enter(boy, e):
-        if right_down(e) or left_up(e): # 오른쪽으로 RUN
-            boy.dir, boy.action, boy.face_dir = 1, 1, 1
-        elif left_down(e) or right_up(e): # 왼쪽으로 RUN
-            boy.dir, boy.action, boy.face_dir = -1, 0, -1
-
-    @staticmethod
-    def exit(boy, e):
-       pass
-
-    @staticmethod
-    def do(boy):
-        boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
-        boy.x += boy.dir * RUN_SPEED_PPS*game_framework.frame_time
-        boy.x = clamp(25, boy.x, 1600-25)
-
+        if boy.is_turn == 1:
+            boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+            boy.x += 1 * RUN_SPEED_PPS * game_framework.frame_time
+            boy.x = clamp(50, boy.x, 1600 - 50)
+            if boy.x >= 1500:
+                boy.is_turn = 0
+        elif boy.is_turn == 0:
+            boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+            boy.x -= 1 * RUN_SPEED_PPS * game_framework.frame_time
+            boy.x = clamp(50, boy.x, 1600 - 50)
+            if boy.x <= 100:
+                boy.is_turn = 1
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_draw(int(boy.frame) * 183, 168, 167, 167, boy.x, boy.y)
-
-
+        if boy.is_turn == 1:
+            boy.image.clip_draw(int(boy.frame) * 183, 168, 167, 167, boy.x, boy.y)
+        elif boy.is_turn == 0:
+            boy.image.clip_composite_draw(int(boy.frame) * 183, 168, 167, 167, 135,'v', boy.x, boy.y,167,167)
 
 
 class StateMachine:
     def __init__(self, boy):
         self.boy = boy
-        self.cur_state = Idle
+        self.cur_state = Auto
         self.transitions = {
-            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, space_down: Idle},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, space_down: Run},
             Auto:{Auto_run:Auto}
         }
 
@@ -178,7 +151,7 @@ class StateMachine:
 
 class Boy:
     def __init__(self):
-        self.x, self.y = 400, 90
+        self.x, self.y = random.randint(300,1200), random.randint(200,600)
         self.frame = 0
         self.action = 3
         self.face_dir = 1

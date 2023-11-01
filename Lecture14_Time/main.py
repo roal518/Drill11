@@ -1,4 +1,4 @@
-from pico2d import open_canvas, delay, close_canvas
+from pico2d import *
 import game_framework
 
 import play_mode as start_mode

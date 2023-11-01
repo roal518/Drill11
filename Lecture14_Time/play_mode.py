@@ -28,6 +28,24 @@ def init():
 
     boy = Boy()
     game_world.add_object(boy, 1)
+    boy1=Boy()
+    game_world.add_object(boy1, 1)
+    boy2 = Boy()
+    game_world.add_object(boy2, 1)
+    boy3=Boy()
+    game_world.add_object(boy3, 1)
+    boy4= Boy()
+    game_world.add_object(boy4, 1)
+    boy5=Boy()
+    game_world.add_object(boy5, 1)
+    boy6 = Boy()
+    game_world.add_object(boy6, 1)
+    boy7 = Boy()
+    game_world.add_object(boy7, 1)
+    boy8= Boy()
+    game_world.add_object(boy8, 1)
+    boy9=Boy()
+    game_world.add_object(boy9, 1)
 
 
 def finish():
